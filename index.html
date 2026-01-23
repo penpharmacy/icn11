@@ -10,25 +10,19 @@
     
     <style>
         body { font-family: 'Sarabun', sans-serif; background-color: #f0f2f5; color: #2c3e50; }
-        .header-banner { background: linear-gradient(135deg, #11998e, #38ef7d); color: white; padding: 30px; border-radius: 0 0 25px 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        /* Card & UI */
+        .header-banner { background: linear-gradient(135deg, #16a085, #2ecc71); color: white; padding: 30px; border-radius: 0 0 25px 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .card { border-radius: 15px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .section-title { border-left: 6px solid #11998e; padding-left: 15px; margin-bottom: 25px; color: #11998e; font-weight: bold; font-size: 1.2rem; }
-        
-        /* Form Styling */
-        .radio-group-box { background: #fafafa; padding: 18px; border-radius: 12px; border: 1px solid #eee; height: 100%; }
-        .other-input { display: none; margin-top: 10px; border-color: #11998e; }
+        .section-title { border-left: 8px solid #16a085; padding-left: 15px; margin-bottom: 25px; color: #16a085; font-weight: bold; font-size: 1.25rem; }
         
         /* Dashboard Styling */
-        .dash-card { background: white; border-radius: 15px; padding: 25px; text-align: center; border-bottom: 5px solid #11998e; height: 100%; }
-        .dash-title { font-size: 0.85rem; color: #666; text-transform: uppercase; font-weight: bold; margin-bottom: 10px; }
-        .dash-value { font-size: 2rem; font-weight: 800; color: #2c3e50; }
+        .dash-card { background: white; border-radius: 15px; padding: 25px; text-align: center; border-bottom: 5px solid #16a085; height: 100%; }
+        .dash-title { font-size: 0.85rem; color: #7f8c8d; font-weight: 700; margin-bottom: 8px; }
+        .dash-value { font-size: 2.2rem; font-weight: 800; display: block; line-height: 1; }
         .dash-fraction { font-size: 0.9rem; color: #bdc3c7; }
 
-        /* Status Colors for Report */
-        .text-hundred { color: #e74c3c !important; font-weight: 900; } 
-        .text-success-custom { color: #27ae60 !important; font-weight: 700; }
+        /* Form Radio Styling */
+        .radio-group-box { background: #fafafa; padding: 18px; border-radius: 12px; border: 1px solid #eee; height: 100%; }
+        .other-input { display: none; margin-top: 10px; border-color: #16a085; }
 
         @media print { .no-print { display: none !important; } .card { box-shadow: none; border: 1px solid #eee; } }
     </style>
@@ -36,14 +30,14 @@
 <body>
 
 <div class="header-banner text-center mb-4 no-print">
-    <h2 class="fw-bold"><i class="fas fa-hands-wash"></i> Hand Hygiene Audit System</h2>
-    <p class="mb-0 opacity-75">โรงพยาบาลพุนพิน | Phunphin Hospital</p>
+    <h2 class="fw-bold"><i class="fas fa-hand-holding-medical"></i> IC Hand Hygiene System</h2>
+    <p class="mb-0 opacity-75">โรงพยาบาลพุนพิน | Phunphin Hospital Dashboard & Audit</p>
 </div>
 
 <div class="container-fluid px-lg-5">
     
     <div class="card p-4 no-print">
-        <h5 class="section-title"><i class="fas fa-edit"></i> 1. บันทึกผลการสังเกตการณ์</h5>
+        <h5 class="section-title"><i class="fas fa-edit"></i> บันทึกผลการสังเกตการณ์</h5>
         <div class="row g-3 mb-4">
             <div class="col-md-3"><label class="form-label fw-bold">วันที่สังเกต</label><input type="date" id="obsDate" class="form-control form-control-lg"></div>
             <div class="col-md-2"><label class="form-label fw-bold">เวลา</label><input type="time" id="obsTime" class="form-control form-control-lg"></div>
@@ -101,7 +95,7 @@
         </div>
     </div>
 
-    <h5 class="section-title"><i class="fas fa-chart-line"></i> 2. แดชบอร์ดและรายงานสรุปผล</h5>
+    <h5 class="section-title"><i class="fas fa-chart-line"></i> รายงานสรุปผล (Dashboard)</h5>
     
     <div class="row g-3 mb-4">
         <div class="col-md-3"><div class="dash-card"><div class="dash-title">Hand Wash Overall</div><div class="dash-value text-primary" id="hw_val">0%</div><div class="dash-fraction" id="hw_frac">(0/0)</div></div></div>
@@ -110,59 +104,33 @@
         <div class="col-md-3"><div class="dash-card" style="border-bottom-color: #f39c12;"><div class="dash-title text-warning">ความพร้อมอุปกรณ์</div><div class="dash-value text-warning" id="equip_val">0%</div><div class="dash-fraction" id="equip_frac">(0/0)</div></div></div>
     </div>
 
-    <div class="row g-4 mb-4 no-print">
-        <div class="col-md-12 text-end">
-            <button class="btn btn-outline-primary me-2" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
-            <button class="btn btn-outline-dark" onclick="window.print()"><i class="fas fa-print"></i> พิมพ์ PDF</button>
+    <div class="card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold m-0">สรุปตาม 5 Moments</h6>
+            <button class="btn btn-sm btn-outline-primary no-print" onclick="fetchData()"><i class="fas fa-sync"></i> รีเฟรชข้อมูล</button>
         </div>
-    </div>
-
-    <div id="reportArea">
-        <div class="card p-4">
-            <h6 class="fw-bold mb-3">สรุปตาม 5 Moments</h6>
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered text-center align-middle">
-                    <thead class="table-dark">
-                        <tr><th class="text-start">Moment</th><th>HW + HR (%)</th><th>HW (%)</th><th>HR (%)</th><th>ไม่ล้างมือ</th><th>สวมถุงมือ</th></tr>
-                    </thead>
-                    <tbody id="momentTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card p-4">
-                    <h6 class="fw-bold mb-3">แยกตามแผนก</h6>
-                    <table class="table table-sm table-bordered text-center align-middle">
-                        <thead class="table-light"><tr><th>แผนก</th><th>HW+HR (%)</th><th>HW (%)</th><th>HR (%)</th></tr></thead>
-                        <tbody id="deptTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card p-4">
-                    <h6 class="fw-bold mb-3">แยกตามวิชาชีพ</h6>
-                    <table class="table table-sm table-bordered text-center align-middle">
-                        <thead class="table-light"><tr><th>วิชาชีพ</th><th>HW+HR (%)</th><th>HW (%)</th><th>HR (%)</th></tr></thead>
-                        <tbody id="roleTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr><th class="text-start">Moment</th><th>HW+HR (%)</th><th>HW (%)</th><th>HR (%)</th><th>ไม่ล้างมือ (%)</th><th>สวมถุงมือ (%)</th></tr>
+                </thead>
+                <tbody id="momentTableBody"></tbody>
+            </table>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
-    // ตั้งค่า URL จาก Google Apps Script ของคุณ
+    // ** เปลี่ยน URL เป็น Web App URL จาก Google Apps Script ของคุณ **
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBrC7afQChoOR2RrSWUQXoX3B0pSkj-Vrrt0OIUSSd_Ms4YsLzPXUI5lvjm0QohtmD4w/exec"; 
     const momentLabels = ["ก่อนสัมผัสผู้ป่วย", "ก่อนทำหัตถการปลอดเชื้อ", "หลังสัมผัสสารคัดหลั่งผู้ป่วย", "หลังสัมผัสผู้ป่วย", "หลังสัมผัสสิ่งรอบตัวผู้ป่วย"];
     let database = [];
 
     window.onload = function() {
-        // สร้างปุ่มเลือก Moment
+        // สร้างปุ่มเลือก Moment อัตโนมัติ
         const mDiv = document.getElementById('momentInputList');
         momentLabels.forEach((label, i) => {
             mDiv.innerHTML += `
@@ -177,16 +145,22 @@
                         <input type="radio" class="btn-check" name="m${i}" id="m${i}no" value="None">
                         <label class="btn btn-outline-danger btn-sm px-2" for="m${i}no">ไม่ล้าง</label>
                         <input type="radio" class="btn-check" name="m${i}" id="m${i}gl" value="Glove">
-                        <label class="btn btn-outline-secondary btn-sm px-2" for="m${i}gl">ถุงมือ</label>
+                        <label class="btn btn-outline-secondary btn-sm px-2" for="m${i}gl">สวมถุงมือ</label>
                     </div>
                 </div>
             </div>`;
         });
-        fetchData();
+        fetchData(); // ดึงข้อมูลมาแสดงผลทันทีที่เปิดหน้าเว็บ
     };
 
     function fetchData() {
-        fetch(SCRIPT_URL).then(res => res.json()).then(data => { database = data; render(database); }).catch(e => console.log("Local Mode"));
+        fetch(SCRIPT_URL)
+            .then(res => res.json())
+            .then(data => {
+                database = data;
+                render(database);
+            })
+            .catch(err => console.log("Fetch Error / Local Mode"));
     }
 
     function toggleOther(id, show) { document.getElementById(id).style.display = show ? "block" : "none"; }
@@ -202,10 +176,10 @@
         const dRadio = document.querySelector('input[name="deptRadio"]:checked');
         const rRadio = document.querySelector('input[name="roleRadio"]:checked');
 
-        if (!dDate || !dRadio || !rRadio) return alert("กรุณากรอกข้อมูลพื้นฐานให้ครบ");
+        if (!dDate || !dRadio || !rRadio) return alert("กรุณากรอกข้อมูลให้ครบถ้วน");
 
         const record = {
-            obsDate: dDate, 
+            obsDate: dDate,
             obsTime: document.getElementById('obsTime').value,
             dept: dRadio.value === "อื่นๆ" ? document.getElementById('deptOther').value : dRadio.value,
             role: rRadio.value === "อื่นๆ" ? document.getElementById('roleOther').value : rRadio.value,
@@ -216,62 +190,53 @@
             equips: Array.from(document.querySelectorAll('.equip')).map(e => e.checked ? 1 : 0)
         };
 
-        // ส่งข้อมูลไป Google Sheets
+        // ส่งข้อมูลไป Google Sheet แบบ no-cors
         fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(record) });
+        
+        // อัปเดตข้อมูลในหน้าจอทันที (ไม่ต้องรอ Refresh)
         database.push(record);
         render(database);
-        alert("บันทึกข้อมูลและอัปเดตรายงานแล้ว");
+        alert("บันทึกข้อมูลเรียบร้อยแล้ว");
         clearForm();
-    }
-
-    // ฟังก์ชันช่วยจัดการสีตามเปอร์เซ็นต์
-    function getPercentColor(pct) {
-        if (pct === 0) return 'text-danger';
-        if (pct === 100) return 'text-success-custom';
-        return '';
     }
 
     function render(data) {
         if(data.length === 0) return;
-        let hw = 0, hr = 0, eqCount = 0;
+        let hw = 0, hr = 0, eqTotal = 0;
         data.forEach(d => {
             d.m.forEach(v => { if(v==='HW') hw++; if(v==='HR') hr++; });
-            d.equips.forEach(v => eqCount += v);
+            d.equips.forEach(v => eqTotal += v);
         });
 
         const totalOpp = data.length * 5;
         document.getElementById('hw_val').innerText = ((hw / totalOpp) * 100).toFixed(1) + "%";
         document.getElementById('hr_val').innerText = ((hr / totalOpp) * 100).toFixed(1) + "%";
         document.getElementById('comp_val').innerText = (((hw + hr) / totalOpp) * 100).toFixed(1) + "%";
-        document.getElementById('equip_val').innerText = ((eqCount / (data.length * 7)) * 100).toFixed(1) + "%";
+        document.getElementById('equip_val').innerText = ((eqTotal / (data.length * 7)) * 100).toFixed(1) + "%";
         
         document.getElementById('hw_frac').innerText = `(${hw}/${totalOpp})`;
         document.getElementById('hr_frac').innerText = `(${hr}/${totalOpp})`;
         document.getElementById('comp_frac').innerText = `(${hw+hr}/${totalOpp})`;
-        document.getElementById('equip_frac').innerText = `(${eqCount}/${data.length*7})`;
+        document.getElementById('equip_frac').innerText = `(${eqTotal}/${data.length * 7})`;
 
-        // เรนเดอร์ตาราง Moment
-        const mBody = document.getElementById('momentTableBody'); mBody.innerHTML = '';
+        // เรนเดอร์ตาราง Moment รายงานผลอัตโนมัติ
+        const mBody = document.getElementById('momentTableBody');
+        mBody.innerHTML = '';
         momentLabels.forEach((label, idx) => {
             let s = {HW:0, HR:0, None:0, Glove:0};
             data.forEach(d => s[d.m[idx]]++);
             const total = data.length;
-            const compPct = (((s.HW + s.HR) / total) * 100).toFixed(1);
+            const hwHrPct = (((s.HW + s.HR) / total) * 100).toFixed(1);
+            
             mBody.innerHTML += `<tr>
                 <td class="text-start fw-bold">${label}</td>
-                <td class="table-success fw-bold ${getPercentColor(parseFloat(compPct))}">${compPct}%</td>
+                <td class="table-success fw-bold">${hwHrPct}%</td>
                 <td>${((s.HW/total)*100).toFixed(1)}%</td>
                 <td>${((s.HR/total)*100).toFixed(1)}%</td>
-                <td class="text-muted">${s.None}</td>
-                <td class="text-muted">${s.Glove}</td>
+                <td>${((s.None/total)*100).toFixed(1)}%</td>
+                <td>${((s.Glove/total)*100).toFixed(1)}%</td>
             </tr>`;
         });
-    }
-
-    function exportToExcel() {
-        const ws = XLSX.utils.json_to_sheet(database);
-        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "RawData");
-        XLSX.writeFile(wb, "HandHygiene_Audit.xlsx");
     }
 </script>
 </body>
