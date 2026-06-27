@@ -681,7 +681,7 @@
                     
                     <!-- Spreadsheet clickable anchor link -->
                     <a id="sheetLinkDisplay" href="https://docs.google.com/spreadsheets/d/1y6WfS1W23gV8f_v7T6n3b_w073W8N08_6888Y0_Y888/edit" target="_blank" class="fw-bold text-decoration-none d-block my-3 fs-5" style="color: #16a085;">
-                        <i class="fas fa-external-link-alt me-2"></i>DATA Hand Hygiene Audit - Google ชีต (คลิกเพื่อเปิดดูสเปรดชีต)
+                        <i class="fas fa-external-link-alt me-2"></i>DATA Hand Hygiene Audit1 - Google ชีต (คลิกเพื่อเปิดดูสเปรดชีต)
                     </a>
                     
                     <span class="small text-muted d-block"><i class="fas fa-info-circle me-1"></i> ข้อมูลจะถูกดึงและบันทึกลงในแท็บ <strong class="text-dark">"DATA"</strong> โดยอัตโนมัติ</span>
@@ -1418,64 +1418,12 @@
         charts.deptMoment = new Chart(document.getElementById('deptMomentChart'), { type: 'bar', data: { labels: depts, datasets: datasets }, options: { maintainAspectRatio: false, scales: { y: commonYAxis } } });
     }
 
+    // Role moments chart
     function drawRoleMomentChart(data) {
         if(charts.roleMoment) charts.roleMoment.destroy();
         const roles = [...new Set(data.map(d => d.role))].sort(); const colors = ['#1abc9c', '#3498db', '#9b59b6', '#f1c40f', '#e67e22'];
         const datasets = [0, 1, 2, 3, 4].map(mIdx => ({ label: `M${mIdx+1}`, data: roles.map(role => { const f = data.filter(d => d.role === role); const total = f.filter(d => d.m && d.m[mIdx] && d.m[mIdx] !== "").length; const comp = f.filter(d => d.m && (d.m[mIdx] === 'HW' || d.m[mIdx] === 'HR')).length; return total > 0 ? ((comp / total) * 100).toFixed(1) : 0; }), backgroundColor: colors[mIdx], borderRadius: 4 }));
         charts.roleMoment = new Chart(document.getElementById('roleMomentChart'), { type: 'bar', data: { labels: roles, datasets: datasets }, options: { maintainAspectRatio: false, scales: { y: commonYAxis } } });
-    }
-
-    // Dynamic Excel Exporter
-    function exportToExcel() {
-        if (!currentFilteredData || currentFilteredData.length === 0) { 
-            return showCustomAlert("ไม่มีข้อมูลสำหรับการ Export", "โปรดเพิ่มข้อมูลหรือปรับแต่งค่าเวลาเพื่อให้มีแถวข้อมูลขั้นต่ำ", false); 
-        }
-        
-        const wb = XLSX.utils.book_new();
-
-        // Sheet 1: Raw Data
-        const rawSheetData = currentFilteredData.map(d => ({
-            "วันที่": d.obsDate,
-            "แผนก": d.dept,
-            "วิชาชีพ": d.role,
-            "M1": d.m[0] || "-", "M2": d.m[1] || "-", "M3": d.m[2] || "-", "M4": d.m[3] || "-", "M5": d.m[4] || "-",
-            "อ่างล้างมือ": d.equips[0], "สบู่เหลว": d.equips[1], "Chlorhexidine": d.equips[2], 
-            "Alcohol rub": d.equips[3], "กระดาษเช็ดมือ": d.equips[4], "โปสเตอร์": d.equips[5], "ถังขยะ": d.equips[6]
-        }));
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rawSheetData), "Raw_Data");
-
-        // Sheet 2: Department Summary
-        const depts = [...new Set(currentFilteredData.map(d => d.dept))].sort();
-        const deptSummary = depts.map(dept => {
-            const f = currentFilteredData.filter(d => d.dept === dept);
-            let s = {HW:0, HR:0, None:0, Glove:0};
-            f.forEach(d => { if(d.m) d.m.forEach(v => { if(v) s[v]++; }); });
-            const total = s.HW + s.HR + s.None + s.Glove;
-            return {
-                "แผนก": dept,
-                "HW+HR (%)": total > 0 ? ((s.HW + s.HR) / total * 100).toFixed(2) : "0.00",
-                "HW (ครั้ง)": s.HW, "HR (ครั้ง)": s.HR, "ไม่ล้างมือ (ครั้ง)": s.None, "สวมถุงมือ (ครั้ง)": s.Glove, "โอกาสทั้งหมด": total
-            };
-        });
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(deptSummary), "Dept_Summary");
-
-        // Sheet 3: Equipment Summary
-        const equipSummary = depts.map(dept => {
-            const f = currentFilteredData.filter(d => d.dept === dept);
-            const scores = Array(7).fill(0);
-            f.forEach(d => { if(d.equips) d.equips.forEach((v, i) => scores[i] += v); });
-            return {
-                "แผนก": dept,
-                "อ่างล้างมือ (%)": f.length > 0 ? (scores[0]/f.length*100).toFixed(2) : 0,
-                "สบู่เหลว (%)": f.length > 0 ? (scores[1]/f.length*100).toFixed(2) : 0,
-                "Chlorhexidine (%)": f.length > 0 ? (scores[2]/f.length*100).toFixed(2) : 0,
-                "Alcohol rub (%)": f.length > 0 ? (scores[3]/f.length*100).toFixed(2) : 0,
-                "ภาพรวมอุปกรณ์ (%)": f.length > 0 ? (scores.reduce((a,b)=>a+b,0)/(f.length*7)*100).toFixed(2) : 0
-            };
-        });
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(equipSummary), "Equipment_Summary");
-
-        XLSX.writeFile(wb, `IC_HandHygiene_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
     }
 </script>
 </body>
