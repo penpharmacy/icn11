@@ -904,6 +904,7 @@
             .then(data => {
                 database = data.map(item => {
                     let record = {...item};
+                    // Standardize properties to array regardless of how they are transferred
                     if (typeof record.m === 'string') {
                         try { record.m = JSON.parse(record.m); } catch(e) { record.m = record.m.split(','); }
                     }
