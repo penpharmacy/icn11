@@ -680,7 +680,7 @@
                     </div>
                     
                     <!-- Spreadsheet clickable anchor link -->
-                    <a id="sheetLinkDisplay" href="https://docs.google.com/spreadsheets/d/1y6WfS1W23gV8f_v7T6n3b_w073W8N08_6888Y0_Y888/edit" target="_blank" class="fw-bold text-decoration-none d-block my-3 fs-5" style="color: #16a085;">
+                    <a id="sheetLinkDisplay" href="https://docs.google.com/spreadsheets/d/1yq3KywK0Z5mX5UHJ191r2tnl5qV_cOrMFLhBH4gVuJ0/edit" target="_blank" class="fw-bold text-decoration-none d-block my-3 fs-5" style="color: #16a085;">
                         <i class="fas fa-external-link-alt me-2"></i>DATA Hand Hygiene Audit1 - Google ชีต (คลิกเพื่อเปิดดูสเปรดชีต)
                     </a>
                     
@@ -720,9 +720,9 @@
 </div>
 
 <script>
-    // System script configurations (Fallback defaults)
-    const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx58a1xS-6se0SXJ_pyfPsk7wIPZlz9I6OGcksrA3ohJ9hkHloZVTbdD9a27HpbGK8QbQ/exec";
-    const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1y6WfS1W23gV8f_v7T6n3b_w073W8N08_6888Y0_Y888/edit";
+    // System script configurations (Fallback defaults with your newly deployed Web App URL)
+    const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzKpBKW5Wh16zbVPY29EHt6H_0Fdu5vDMxmT1aoqRhdaMuie_HAueXioF-au_0Ge2Ktg/exec";
+    const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1yq3KywK0Z5mX5UHJ191r2tnl5qV_cOrMFLhBH4gVuJ0/edit";
 
     let activeScriptUrl = localStorage.getItem('hh_script_url') || DEFAULT_SCRIPT_URL;
     let activeSheetUrl = localStorage.getItem('hh_sheet_url') || DEFAULT_SHEET_URL;
@@ -737,6 +737,12 @@
     let currentFilteredData = [];
 
     window.onload = function() {
+        // Self-healing legacy cache check
+        if (activeSheetUrl.includes("1y6WfS1W23gV8f_v7T6n3b_w073W8N08_6888Y0_Y888")) {
+            activeSheetUrl = DEFAULT_SHEET_URL;
+            localStorage.setItem('hh_sheet_url', DEFAULT_SHEET_URL);
+        }
+        
         // Set dynamic settings initial UI fields
         document.getElementById('inputScriptUrl').value = activeScriptUrl;
         document.getElementById('sheetLinkDisplay').href = activeSheetUrl;
@@ -996,9 +1002,9 @@
             // Custom compliant background coloring
             let compBadgeColor = "background-color: #fef9e7; color: #f39c12; border: 1px solid #fdebd0;";
             if (rowComp >= 80) {
-                compBadgeColor = "background-color: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9;";
+                compBadgeColor = "background-color: #e8f5e9; color: #1b5e20; border: solid 1px #c8e6c9;";
             } else if (rowComp < 50) {
-                compBadgeColor = "background-color: #fdf2f2; color: #ec5858; border: 1px solid #fde8e8;";
+                compBadgeColor = "background-color: #fdf2f2; color: #ec5858; border: solid 1px #fde8e8;";
             }
 
             const syncPill = d.synced 
@@ -1418,7 +1424,6 @@
         charts.deptMoment = new Chart(document.getElementById('deptMomentChart'), { type: 'bar', data: { labels: depts, datasets: datasets }, options: { maintainAspectRatio: false, scales: { y: commonYAxis } } });
     }
 
-    // Role moments chart
     function drawRoleMomentChart(data) {
         if(charts.roleMoment) charts.roleMoment.destroy();
         const roles = [...new Set(data.map(d => d.role))].sort(); const colors = ['#1abc9c', '#3498db', '#9b59b6', '#f1c40f', '#e67e22'];
